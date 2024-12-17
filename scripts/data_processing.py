@@ -8,6 +8,7 @@ class Data:
         self.data_type = data_type
         self.data = self.read_data()
         self.name_columns = self.get_columns()
+        self.number_lines = self.size_data()
 
     def read_json(self):
         json_data = []
@@ -32,6 +33,10 @@ class Data:
         elif self.data_type == 'json':
             data = self.read_json()
 
+        elif self.data_type == 'list':
+            data = self.path
+            self.path = 'Memory in list'
+
         return data
     
     def get_columns(self):
@@ -48,3 +53,32 @@ class Data:
         
         self.data = new_data
         self.name_columns = self.get_columns()
+
+
+    def size_data(self):
+        return len(self.data)
+    
+
+    def join(dataA, dataB):
+        combined_list = []
+        combined_list.extend(dataA.data)
+        combined_list.extend(dataB.data)
+        return Data(combined_list, 'list')
+    
+    def transform_data_to_table(self):
+        combined_data_table = [self.name_columns]
+
+        for row in self.data:
+            row_data = []
+            for column in self.name_columns:
+                row_data.append(row.get(column, 'Unavailable'))
+            combined_data_table.append(row_data)
+        
+        return combined_data_table
+    
+    
+    def save_data(self, path):
+        combined_data_table = self.transform_data_to_table()
+        with open(path, 'w') as file:
+            writer = csv.writer(file)
+            writer.writerows(combined_data_table)
