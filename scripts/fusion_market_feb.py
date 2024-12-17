@@ -1,116 +1,113 @@
 import json
 import csv
 
-def leitura_json(path_json):
-    dados_json = []
+def read_json(path_json):
+    json_data = []
     with open(path_json, 'r') as file:
-        dados_json = json.load(file)
-    return dados_json
+        json_data = json.load(file)
+    return json_data
 
-def leitura_csv(path_csv):
-
-    dados_csv = []
+def read_csv(path_csv):
+    csv_data = []
     with open(path_csv, 'r') as file:
         spamreader = csv.DictReader(file, delimiter=',')
         for row in spamreader:
-            dados_csv.append(row)
+            csv_data.append(row)
+    return csv_data
 
-    return dados_csv
+def read_data(path, file_type):
+    data = []
 
-def leitura_dados(path, tipo_arquivo):
-    dados = []
-
-    if tipo_arquivo == 'csv':
-        dados = leitura_csv(path)
+    if file_type == 'csv':
+        data = read_csv(path)
     
-    elif tipo_arquivo == 'json':
-        dados = leitura_json(path)
+    elif file_type == 'json':
+        data = read_json(path)
 
-    return dados
+    return data
 
-def get_columns(dados):
-    return list(dados[-1].keys())
+def get_columns(data):
+    return list(data[-1].keys())
 
-def rename_columns(dados, key_mapping):
-    new_dados_csv = []
+def rename_columns(data, key_mapping):
+    new_csv_data = []
 
-    for old_dict in dados:
-        dict_temp = {}
+    for old_dict in data:
+        temp_dict = {}
         for old_key, value in old_dict.items():
-            dict_temp[key_mapping[old_key]] = value
-        new_dados_csv.append(dict_temp)
+            temp_dict[key_mapping[old_key]] = value
+        new_csv_data.append(temp_dict)
     
-    return new_dados_csv
+    return new_csv_data
 
-def size_data(dados):
-    return len(dados)
+def size_data(data):
+    return len(data)
 
-def join(dadosA, dadosB):
+def join(dataA, dataB):
     combined_list = []
-    combined_list.extend(dadosA)
-    combined_list.extend(dadosB)
+    combined_list.extend(dataA)
+    combined_list.extend(dataB)
     return combined_list
 
-def transformando_dados_tabela(dados, nomes_colunas):
-    
-    dados_combinados_tabela = [nomes_colunas]
+def transform_data_to_table(data, column_names):
+    combined_data_table = [column_names]
 
-    for row in dados:
-        linha = []
-        for coluna in nomes_colunas:
-            linha.append(row.get(coluna, 'Indisponivel'))
-        dados_combinados_tabela.append(linha)
+    for row in data:
+        row_data = []
+        for column in column_names:
+            row_data.append(row.get(column, 'Unavailable'))
+        combined_data_table.append(row_data)
     
-    return dados_combinados_tabela
+    return combined_data_table
 
-def salvando_dados(dados, path):
+def save_data(data, path):
     with open(path, 'w') as file:
         writer = csv.writer(file)
-        writer.writerows(dados)
+        writer.writerows(data)
 
 path_json = 'data_raw/dados_empresaA.json'
 path_csv = 'data_raw/dados_empresaB.csv'
 
 
-# Iniciando a leitura
-dados_json = leitura_dados(path_json,'json')
-nome_colunas_json = get_columns(dados_json)
-tamanho_dados_json = size_data(dados_json)
+# Starting the reading
+json_data = read_data(path_json,'json')
+column_names_json = get_columns(json_data)
+size_json_data = size_data(json_data)
 
-print(f"Nome colunas dados json: {nome_colunas_json}")
-print(f"Tamanho dos dados json: {tamanho_dados_json}")
+print(f"Column names of JSON data: {column_names_json}")
+print(f"Size of JSON data: {size_json_data}")
 
-dados_csv = leitura_dados(path_csv, 'csv')
-nome_colunas_csv = get_columns(dados_csv)
-tamanho_dados_csv = size_data(dados_csv)
-print(nome_colunas_csv)
-print(tamanho_dados_csv)
+csv_data = read_data(path_csv, 'csv')
+column_names_csv = get_columns(csv_data)
+size_csv_data = size_data(csv_data)
+print(column_names_csv)
+print(size_csv_data)
 
-#Transformacao dos dados
+# Data transformation
 
-key_mapping = {'Nome do Item': 'Nome do Produto',
-                'Classificação do Produto': 'Categoria do Produto',
-                'Valor em Reais (R$)': 'Preço do Produto (R$)',
-                'Quantidade em Estoque': 'Quantidade em Estoque',
-                'Nome da Loja': 'Filial',
-                'Data da Venda': 'Data da Venda'}
-dados_csv = rename_columns(dados_csv, key_mapping)
-nome_colunas_csv = get_columns(dados_csv)
-print(nome_colunas_csv)
+key_mapping = {'Nome do Item': 'Product Name',
+               'Classificação do Produto': 'Product Category',
+               'Valor em Reais (R$)': 'Product Price (R$)',
+               'Quantidade em Estoque': 'Stock Quantity',
+               'Nome da Loja': 'Store Branch',
+               'Data da Venda': 'Sale Date'}
+csv_data = rename_columns(csv_data, key_mapping)
+column_names_csv = get_columns(csv_data)
+print(column_names_csv)
 
-dados_fusao = join(dados_json, dados_csv)
-nome_colunas_fusao = get_columns(dados_fusao)
-tamanho_dados_fusao = size_data(dados_fusao)
-print(nome_colunas_fusao)
-print(tamanho_dados_fusao)
+merged_data = join(json_data, csv_data)
+column_names_merge = get_columns(merged_data)
+size_merged_data = size_data(merged_data)
+print(column_names_merge)
+print(size_merged_data)
 
 
-#Salvando dados
+# Saving the data
 
-dados_fusao_tabela = transformando_dados_tabela(dados_fusao, nome_colunas_fusao)
+merged_data_table = transform_data_to_table(merged_data, column_names_merge)
 
-path_dados_combinados = 'data_processed/dados_combinados.csv'
+path_combined_data = 'data_processed/combined_data.csv'
 
-salvando_dados(dados_fusao_tabela, path_dados_combinados)
+save_data(merged_data_table, path_combined_data)
 
-print(path_dados_combinados)
+print(path_combined_data)
