@@ -1,44 +1,7 @@
 import json
 import csv
 
-def read_json(path_json):
-    json_data = []
-    with open(path_json, 'r') as file:
-        json_data = json.load(file)
-    return json_data
-
-def read_csv(path_csv):
-    csv_data = []
-    with open(path_csv, 'r') as file:
-        spamreader = csv.DictReader(file, delimiter=',')
-        for row in spamreader:
-            csv_data.append(row)
-    return csv_data
-
-def read_data(path, file_type):
-    data = []
-
-    if file_type == 'csv':
-        data = read_csv(path)
-    
-    elif file_type == 'json':
-        data = read_json(path)
-
-    return data
-
-def get_columns(data):
-    return list(data[-1].keys())
-
-def rename_columns(data, key_mapping):
-    new_csv_data = []
-
-    for old_dict in data:
-        temp_dict = {}
-        for old_key, value in old_dict.items():
-            temp_dict[key_mapping[old_key]] = value
-        new_csv_data.append(temp_dict)
-    
-    return new_csv_data
+from data_processing import Data
 
 def size_data(data):
     return len(data)
@@ -68,7 +31,27 @@ def save_data(data, path):
 path_json = 'data_raw/dados_empresaA.json'
 path_csv = 'data_raw/dados_empresaB.csv'
 
+#Extract
 
+data_enterpriseA = Data(path_json, 'json')
+print(data_enterpriseA.name_columns)
+data_enterpriseB = data_enterpriseA = Data(path_csv, 'csv')
+print(data_enterpriseB.name_columns)
+
+#Transform
+
+key_mapping = {'Nome do Item': 'Product Name',
+               'Classificação do Produto': 'Product Category',
+               'Valor em Reais (R$)': 'Product Price (R$)',
+               'Quantidade em Estoque': 'Stock Quantity',
+               'Nome da Loja': 'Store Branch',
+               'Data da Venda': 'Sale Date'}
+
+data_enterpriseB.rename_columns(key_mapping)
+print(f'Enterprise B: {data_enterpriseB.get_columns()}')
+
+print(f'Enterprise A: {data_enterpriseA.get_columns()}')
+'''
 # Starting the reading
 json_data = read_data(path_json,'json')
 column_names_json = get_columns(json_data)
@@ -85,12 +68,7 @@ print(size_csv_data)
 
 # Data transformation
 
-key_mapping = {'Nome do Item': 'Product Name',
-               'Classificação do Produto': 'Product Category',
-               'Valor em Reais (R$)': 'Product Price (R$)',
-               'Quantidade em Estoque': 'Stock Quantity',
-               'Nome da Loja': 'Store Branch',
-               'Data da Venda': 'Sale Date'}
+
 csv_data = rename_columns(csv_data, key_mapping)
 column_names_csv = get_columns(csv_data)
 print(column_names_csv)
@@ -111,3 +89,4 @@ path_combined_data = 'data_processed/combined_data.csv'
 save_data(merged_data_table, path_combined_data)
 
 print(path_combined_data)
+'''
