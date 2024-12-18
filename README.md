@@ -63,6 +63,18 @@ sudo apt update && sudo apt upgrade -y
     ```bash
       pip install notebook==7.0.3
     ```
+### Running the Pipeline
+
+1. **Navigate to the scripts folder:**
+```
+cd scripts
+```
+2. **Execute the main script:**
+```
+python fusion_market_feb.py
+```
+3. **The combined file will be saved in data_processed/combined_data.csv.**
+
 
 ## Pipeline Logic
 ### Extract
