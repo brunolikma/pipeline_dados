@@ -38,6 +38,8 @@ This repository demonstrates an ETL (Extract, Transform, Load) project developed
     "Filial": "Filial 8"
   }
 ```
+
+### Company B (CSV)
 | Nome do Item         | Classificação do Produto | Valor em Reais (R$) | Quantidade em Estoque | Nome da Loja | Data da Venda            |
 |-----------------------|--------------------------|---------------------|-----------------------|--------------|--------------------------|
 | Lápis de sobrancelha | Roupas                   | 55.17              | 62                    | Filial 1     | 2023-04-13 18:58:06.794203 |
